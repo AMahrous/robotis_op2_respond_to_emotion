@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<launch>
-
-
-    <node pkg="ksa" type="manual.py" name="manual" />
-
-
-</launch>
