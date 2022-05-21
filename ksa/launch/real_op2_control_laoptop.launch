@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<launch>
+
+    <!-- Run the ai node on the laptop -->
+    <node pkg="ksa" type="ai_dev.py" name="ai" />
+
+
+</launch>
