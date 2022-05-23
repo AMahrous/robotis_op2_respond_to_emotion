@@ -2,19 +2,22 @@
 <launch>
 
     <!-- Add delay before launching control node to let op2_manager initiate properly and finish starting up -->
-    <arg name="node_start_delay" default="5.0" />  
-
 
     <!-- Open the camera and publish the incoming images to be seen by the ai node -->
-    <!-- <include file="$(find usb_cam)/launch/usb_cam-test.launch"/> -->
+    <include file="$(find usb_cam)/launch/usb_cam-test.launch"/>
 
     <!-- launch the op2_manager t=for the robotis op2 as the standard interface with the hardware -->
-    <!-- <include file="$(find op2_manager)/launch/op2_manager.launch"/>     -->
+    <include file="$(find op2_manager)/launch/op2_manager.launch"/>    
 
 
     <!-- Run the manual node which is responsible to recieve the current emotion seeb by the robot and send the proper motion index to the op2_manager to move the robot -->
-    <node pkg="ksa" type="manual.py" name="manual" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+    <!-- Add delay before launching control node to let op2_manager initiate properly and finish starting up -->
+    <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="10 ksa manual.launch"
+    name="timed_roslaunch_manual" output="screen" />
 
-
+    <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="17 ksa initialize_pub.launch"
+    name="timed_roslaunch_initialize_pub" output="screen" />
 
 </launch>

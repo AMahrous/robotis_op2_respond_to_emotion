@@ -42,42 +42,15 @@ class KSA_CONTROL:
         # Create a publisher to initialize the robot before starting motion.
         self.ini_pose_publisher = rospy.Publisher('/robotis/base/ini_pose', String, queue_size=10)
         
-        # Defining a ROS msg of a string data type 
-        self.ini_pose_msg = String()
-        self.ini_pose_msg.data = "ini_pose"
-
-        # Publishing the initialization msg to the op2_manager
-        self.ini_pose_publisher.publish(self.ini_pose_msg)
-        rospy.loginfo("Published ini_pose: %s",self.ini_pose_msg.data)
-        
-        # Wait for the robot to finish
-        rospy.sleep(5)
-        
         # Create a publisher to enable the motion_module to be able to send motion commands.
         self.enable_ctrl_module_publisher = rospy.Publisher('/robotis/enable_ctrl_module', String, queue_size=10)
         
-        # Defining a ROS msg of a string data type 
-        self.enable_ctrl_module_msg = String()
-        self.enable_ctrl_module_msg.data = "action_module"
-        
-        # Publishing the initialization msg to the op2_manager
-        self.enable_ctrl_module_publisher.publish(self.enable_ctrl_module_msg)
-        rospy.loginfo("Published ctrl_module %s:",self.enable_ctrl_module_msg.data)
-        
-        # Wait for the robot to finish
-        rospy.sleep(5)
-
-
         # Create a publisher to send the index of the needed, Motion index table is defined above in this file.
         self.page_num_publisher = rospy.Publisher('/robotis/action/page_num', Int32, queue_size=10)
         
-        # Defining a ROS msg of a string data type 
-        self.page_num_msg = Int32()
-        self.page_num_msg.data = 1
+        # Create a subscriber to the initialization topic to get a command to start initialization to be ready for motion.
+        self.initializer_subscriber = rospy.Subscriber("initialization", String, self.callback_initialize_subscriber)
 
-        # Send an index of 1 which means "Stand Up".
-        self.page_num_publisher.publish(self.page_num_msg)
-        rospy.loginfo("Published page_num: %s",self.page_num_msg.data)
 
         # Send demo motion commands
         # self.demo_command_publisher = rospy.Publisher('/robotis/demo_command', String, queue_size=10)
@@ -110,12 +83,63 @@ class KSA_CONTROL:
         self.rate = rospy.Rate(10) # 10hz
 
 
+
+
     # A method that gets the emotion that is recieved on the /emotions topic and returns the coresponding motion Index from the responses_dict.
     def get_motion_index(self, emotion):
         for emo in self.responses_dict.keys():
             if emo == self.recieved_emotion:
                 return self.responses_dict[emo]
         return "Emotion not found"
+
+    # The callback that is called when a new emotion is recieved.
+    def callback_initialize_subscriber(self, msg):
+
+        # Prin the recieved emotion to the terminal.
+        rospy.loginfo("Received command: %s", msg.data)
+
+
+        # Defining a ROS msg of a string data type 
+        self.ini_pose_msg = String()
+        self.ini_pose_msg.data = "ini_pose"
+
+        # Publishing the initialization msg to the op2_manager
+        self.ini_pose_publisher.publish(self.ini_pose_msg)
+        rospy.loginfo("Published ini_pose: %s",self.ini_pose_msg.data)
+        
+        # Wait for the robot to finish
+        rospy.sleep(5)
+
+        # Defining a ROS msg of a string data type 
+        self.enable_ctrl_module_msg = String()
+        self.enable_ctrl_module_msg.data = "action_module"
+        
+        # Publishing the initialization msg to the op2_manager
+        self.enable_ctrl_module_publisher.publish(self.enable_ctrl_module_msg)
+        rospy.loginfo("Published ctrl_module %s:",self.enable_ctrl_module_msg.data)
+        
+        # Wait for the robot to finish
+        rospy.sleep(5)
+
+        # Defining a ROS msg of a string data type 
+        self.page_num_msg = Int32()
+        self.page_num_msg.data = 1
+
+        # Send an index of 1 which means "Stand Up".
+        self.page_num_publisher.publish(self.page_num_msg)
+        rospy.loginfo("Published page_num: %s",self.page_num_msg.data)
+
+        # Wait for the robot to finish the action.
+        rospy.sleep(8)
+
+
+        rospy.loginfo("Initialization done...!")
+        rospy.loginfo("Ready for work...!")
+        rospy.sleep(5)
+
+        self.rate.sleep()    
+        return
+
 
     # The callback that is called when a new emotion is recieved.
     def callback_emotion_subscriber(self, msg):
