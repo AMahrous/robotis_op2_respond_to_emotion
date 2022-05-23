@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <launch>
 
-    <node pkg="ksa" type="ksa_control.py" name="ksa_control" />
+    <node pkg="ksa" type="ksa_control_dev.py" name="ksa_control" />
 
-    <node pkg="ksa" type="ai_dev.py" name="ai" />
+    <!-- <node pkg="ksa" type="ai_dev.py" name="ai" /> -->
 
 
 </launch>

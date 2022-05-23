@@ -13,7 +13,11 @@
     <!-- Run the manual node which is responsible to recieve the current emotion seeb by the robot and send the proper motion index to the op2_manager to move the robot -->
     <!-- Add delay before launching control node to let op2_manager initiate properly and finish starting up -->
     <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
-    args="15 ksa manual.launch"
-    name="timed_roslaunch" output="screen" />
+    args="10 ksa manual.launch"
+    name="timed_roslaunch_manual" output="screen" />
+
+    <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="17 ksa initialize_pub.launch"
+    name="timed_roslaunch_initialize_pub" output="screen" />
 
 </launch>
